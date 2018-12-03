@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        body{
+            background-color: black;
+        }
+        .container{
+            position: relative;
+            background-color: #14ff15;
+            width: 100%;
+            height: 100%;
+            background: url('./img/space.jpg')  no-repeat; /* Добавляем фон */
+            background-size: cover; /* Масштабируем фон */
+        }
+        .field{
+            position: relative;
+            /*background-color: #d0ccbe;*/
+            width: 1000px;
+            height: 650px;
+            margin: 10px auto;
+            /*overflow: hidden;*/
+            cursor: none;
+        }
+
+        .btnstart{
+            position: relative;
+            display: inline-block;
+            background-color: red;
+            color: white;
+            width: 150px;
+            font-size: 30px;
+            text-align: center;
+            padding: 15px;
+            margin: 20px 20px 20px 250px;
+            cursor: pointer;
+            font-weight: bold;
+            z-index: 2000;
+        }
+        .account{
+            position: relative;
+            display: inline-block;
+            background-color: #5eb2ff;
+            color: white;
+            width: 150px;
+            font-size: 30px;
+            padding: 15px;
+            margin: 20px;
+            font-weight: bold;
+
+        }
+        .score{
+
+        }
+
+
+        .dish{
+            position: relative;
+            float: left;
+            width: 300px;
+            height: 250px;
+            /*background-color: #d0c89d;*/
+            margin: 10px 0px 0px 20px;
+            overflow: hidden;
+
+        }
+        .ufo{
+            position: absolute;
+            /*background-color: #9ed0a8;*/
+            padding: 0 5% 50px 5%;
+            width: 80%;
+            bottom: -60px;
+            left: 5%;
+            -webkit-animation: rotation 4s infinite alternate;
+            /*display: none;*/
+        }
+
+        @-webkit-keyframes rotation {
+            from {
+                -webkit-transform: rotate(5deg);
+            }
+            to {
+                -webkit-transform: rotate(-5deg);
+            }
+        }
+
+        .alf{
+            position: absolute;
+            /*background-color: #9496d0;*/
+            width: 250px;
+            bottom: -150px;
+            left: 25px;
+            /*-webkit-animation: moving 2s infinite alternate;*/
+        }
+
+        .moving{
+            -webkit-animation: moving 2s linear;
+        }
+
+
+        @-webkit-keyframes moving {
+            0% {
+                bottom: -150px;
+            }
+            50% {
+                bottom: 50px;
+            }
+
+            100% {
+                bottom: -150px;
+            }
+        }
+
+        .cat{
+            position: absolute;
+            z-index: 1000;
+            width: 200px;
+            /*background-color: #5eb2ff;*/
+            left: 200px;
+        }
+        .catimg{
+            position: relative;
+            width: 100%;
+        }
+
+        .boom{
+            display: none;
+            position: absolute;
+            z-index: 10001;
+            width: 200px;
+            /*background-color: #5eb2ff;*/
+            left: 200px;
+        }
+        .boomimg{
+            position: relative;
+            width: 100%;
+        }
+
+        .catrotation{
+            -webkit-animation: rotatecat 0.1s linear;
+        }
+
+        @-webkit-keyframes rotatecat {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            50%{
+                transform: rotate(-90deg);
+            }
+
+            100% {
+                transform: rotate(0deg);
+            }
+        }
+
+        .clock{
+            position: relative;
+            display: inline-block;
+            background-color: #79797f;
+            color: white;
+            width: 400px;
+            font-size: 30px;
+            padding: 15px;
+            margin: 20px;
+            font-weight: bold;
+        }
+
+        .timeline{
+            position: relative;
+            display: inline-block;
+            background-color: #2adf0e;
+            width: 0px;
+            padding: 10px 0px 10px 0px;
+            margin: 10px 0px 0px 20px;
+            font-weight: bold;
+            transition: width 0.5s;
+        }
+
+        .gameover{
+            position: absolute;
+            display: none;
+            background: rgba(99, 99, 99, 0.5);
+            color: white;
+            width: 100%;
+            height: 100%;
+            font-size: 50px;
+            font-weight: bold;
+            z-index: 10001;
+        }
+        .over{
+            position: relative;
+            /*background: rgba(27, 255, 14, 0.5);*/
+            margin: 30% auto;
+            vertical-align: middle;
+            text-align: center;
+            /*cursor: pointer;*/
+        }
+        .over:hover{
+            /*text-decoration: underline;*/
+        }
+
+
+    </style>
+
+</head>
+<body>
+<div class="container" style="background-color: #ffe5cd">
+
+    <div class="btnstart">Start Game</div>
+    <div class="account">Score: <span class="score">0</span></div>
+    <div class="clock">Time left:
+        <div class="timeline"></div>
+    </div>
+
+    <div class="field">
+        <!--<div class="dish">-->
+            <!--<img class="alf moving" src="img/alf.png" alt="">-->
+            <!--<img class="ufo" src="img/ship.png" alt="">-->
+        <!--</div>-->
+        <div class="cat"><img class="catimg" src="./img/cat.png" alt=""></div>
+
+        <div class="boom"><img class="boomimg" src="./img/boom.png" alt=""></div>
+
+        <div class="gameover">
+            <div class="over">
+                Game over
+                <br>
+                Click Start Game
+            </div>
+        </div>
+
+    </div>
+
+
+    <!--<img src="img/alf.png" alt="">-->
+    <!--<img src="img/ship.png" alt="">-->
+
+</div>
+
+
+<script>
+
+    class Game{
+        constructor(){
+            this.catRotateTime = 200;
+            this.isGame = false;
+
+            this.field = document.querySelector('.field');
+            this.btnstart = document.querySelector('.btnstart');
+            this.cat = document.querySelector('.cat');
+            this.boom = document.querySelector('.boom');
+            this.score = document.querySelector('.score');
+            this.timeline = document.querySelector('.timeline');
+            this.gameover = document.querySelector('.gameover');
+            this.over = document.querySelector('.over');
+        }
+
+        init(){
+            this.createDishes(6);
+            this.field.addEventListener('click', this.handleFieldClick.bind(this));
+            this.field.addEventListener('mousemove', this.handleMouseMove.bind(this))
+            this.btnstart.addEventListener('click', this.start.bind(this));
+            // this.over.addEventListener('click', this.start.bind(this));
+            this.start()
+        }
+
+        handleMouseMove(event){
+            this.cat.style.left = (event.clientX - 275) + 'px';
+            this.cat.style.top = (event.clientY - 190) + 'px';
+        }
+
+
+        rotateCat(){
+            if(this.cat && !this.cat.classList.contains('catrotation')){
+                this.cat.classList.add('catrotation');
+                setTimeout( ()=>{
+                    this.cat.classList.remove('catrotation')
+                }, this.catRotateTime, this )
+            }
+        }
+
+        addScore(){
+            this.score.innerText = parseInt(this.score.innerText)  + 1;
+            // console.log(this.score)
+        }
+
+        addTimeLine(){
+            var timelineWidth = this.timeline.clientWidth;
+            if(timelineWidth < 210){
+                this.timeline.style.width = (timelineWidth + 30) + 'px';
+                this.timeline.style.backgroundColor = timelineWidth <= 90 ? 'red' : '#2adf0e';
+            }
+        }
+
+
+        handleAlfClick(event){
+            if(!this.isGame) return;
+
+            var mousex = event.clientX;
+            var mousey = event.clientY;
+            var alfs = Array.from( document.querySelectorAll('.alf'));
+
+            alfs.forEach( elem =>{
+                var elemx = elem.getBoundingClientRect().x;
+                var elemy= elem.getBoundingClientRect().y;
+                var elemW = elem.getBoundingClientRect().width;
+                var elemH = elem.getBoundingClientRect().height;
+
+                if( (((mousex > elemx) && (mousex < (elemx+elemW) )) &&
+                    ((mousey > elemy) && (mousey < (elemy+elemH) ))) &&
+                    elem.classList.contains('moving')
+
+                ){
+                    elem.classList.remove('moving');
+                    this.addScore();
+                    this.addTimeLine();
+                    this.boomShow();
+                }
+            } )
+        }
+
+        handleFieldClick(event){
+            this.handleAlfClick(event);
+            this.rotateCat()
+        }
+
+        createDish(){
+            var dish = document.createElement('div');
+            dish.classList = 'dish';
+
+            var imgUfo = document.createElement('img');
+            imgUfo.classList = 'ufo';
+            imgUfo.src = 'img/ship.png';
+            imgUfo.style.webkitAnimationDuration = (Math.random()*2+ 2) + 's';
+
+            var imgAlf = document.createElement('img');
+            imgAlf.classList = 'alf';
+            // imgAlf.classList.add('moving');
+            imgAlf.src = 'img/alf.png';
+            imgAlf.style.webkitAnimationDuration = (Math.random()*3 + 2) + 's';
+
+            dish.appendChild(imgAlf);
+            dish.appendChild(imgUfo);
+            this.field.appendChild(dish);
+        }
+
+        createDishes(num){
+            for (var i = 0; i < num; i++) this.createDish();
+        }
+
+        stopMovingAlfs(){
+            var alfs = Array.from( document.querySelectorAll('.alf') );
+            alfs.forEach( elem => elem.classList.remove('moving'))
+        }
+
+        movingAlf(){
+            var rand, alfs, alf, durations;
+            var time = 0;
+            var self = this;
+
+            var timerId = setTimeout(function tick() {
+                if(!self.isGame) return;
+                // self.stopMovingAlfs();
+                if( Math.random() < 0.8) {
+                    time = (Math.random()*500);
+                    timerId = setTimeout(tick, time);
+                    return
+                }
+
+                alfs = Array.from( document.querySelectorAll('.alf') );
+                alfs = alfs.filter( item => {return !item.classList.contains('moving')} );
+                rand = Math.floor( Math.random()* alfs.length -1)+ 1;
+
+                alf = alfs[rand];
+                if(alf){
+                    alf.classList.add('moving');
+
+                    durations = (Math.random()*1)+0.8;
+                    alf.style.webkitAnimationDuration = durations + 's';
+
+                    setTimeout( (el)=>{
+                        el.classList.remove('moving');
+                    }, durations*1000, alf)
+                }
+
+
+                // console.log(rand)
+                // console.log(alfs[rand].style.webkitAnimationDuration)
+                // console.log( Math.max(...[1,5,2])  )
+
+                time = (Math.random()*500) ;
+                timerId = setTimeout(tick, time);
+            }, time);
+
+        }
+
+        startTimeline(){
+            if(!this.isGame) return;
+
+            var self = this;
+            this.timeline.style.backgroundColor = '#2adf0e';
+            this.timeline.style.width = '210px';
+
+            var timerLine = setTimeout(function tick() {
+                if(!self.isGame) return;
+
+                var timelineWidth = parseInt(self.timeline.style.width);
+                // console.log('timelineWidth 2)', timelineWidth)
+                // console.log('self.timeline.style.width)', self.timeline.style.width)
+                if(timelineWidth >= 0){
+                    self.timeline.style.width = (timelineWidth - 30) + 'px';
+                    self.timeline.style.backgroundColor = self.timeline.clientWidth <= 90 ? 'red' : '#2adf0e';
+                    // console.log(self.timeline.clientWidth)
+                    if(timelineWidth < 30){
+                        self.timeline.style.width = '0px';
+                        self.endGame();
+                        return
+                    }
+                    timerLine = setTimeout(tick, 2000);
+                }else {
+                    self.timeline.style.width = '0px';
+                    self.endGame();
+                    return
+                }
+            }, 2000);
+        }
+
+        start(){
+            // console.log('start');
+            if(this.isGame) return;
+
+            this.isGame = true;
+            this.gameover.style.display = 'none';
+            this.startTimeline();
+            this.movingAlf();
+            this.score.innerText = 0;
+        }
+
+        endGame(){
+            // console.log('endGame');
+            this.isGame = false;
+            this.gameover.style.display = 'block';
+        }
+
+        boomShow(){
+
+            this.boom.style.left = (this.cat.getBoundingClientRect().x - 240) + 'px';
+            this.boom.style.top = (this.cat.getBoundingClientRect().y - 160) + 'px';
+
+            setTimeout( ()=>{
+                this.cat.style.display = 'none';
+                this.boom.style.display = 'block';
+            }, 100 )
+
+
+            setTimeout( ()=>{
+                this.cat.style.display = 'block';
+                this.boom.style.display = 'none';
+            }, 300 )
+
+        }
+    }
+
+
+    var game = new Game();
+    game.init();
+    // game.start();
+
+
+</script>
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
