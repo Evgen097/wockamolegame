@@ -20,3 +20,6 @@ app.listen(PORT, function () {
 // git commit -m "first commit"
 // git remote add origin https://github.com/Evgen097/wockamolegame.git
 //     git push -u origin master
+
+// https://wackamolegame.herokuapp.com/ | https://git.heroku.com/wackamolegame.git
+// https://wackamolegame.herokuapp.com/
